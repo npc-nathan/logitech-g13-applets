@@ -45,3 +45,16 @@ mod should say so in this README's table, in the same words the applet itself wo
 
 MIT OR Apache-2.0 - see [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE). The same as the driver, and
 the same as the mods these applets are written for.
+
+## The three pieces
+
+This repository is one of three that go together:
+
+| repository | what it is |
+|---|---|
+| [logitech-g13-linux-driver](https://github.com/npc-nathan/logitech-g13-linux-driver) | the driver: it reads the pad, sends keys, draws on the 160x43 screen, and configures it from a window - **install this first**, it is what draws any of these applets |
+| **[logitech-g13-applets](https://github.com/npc-nathan/logitech-g13-applets)** | **this one** - extra screens for the pad, the ones that need something else installed to be worth drawing |
+| [g13-hud](https://github.com/npc-nathan/g13-hud) | Cyberpunk 2077's health, objective and district, written out by a Cyber Engine Tweaks mod for the driver to draw |
+
+An applet is only the definition of a screen: without the program or mod it reads from, it draws a gap rather than
+a number, which is why each one here says what it needs.
