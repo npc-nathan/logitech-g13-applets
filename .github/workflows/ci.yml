@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The checker is the driver's own, taken from the published package rather than built from source: an applet
+      # here is then checked against the driver people actually install, which is the thing it has to work with.
+      - name: the released driver
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download --repo npc-nathan/logitech-g13-linux-driver \
+            --pattern 'g13_*_amd64.deb' --dir /tmp/g13pkg
+          dpkg-deb -x /tmp/g13pkg/g13_*_amd64.deb /tmp/g13pkg/root
+          /tmp/g13pkg/root/usr/bin/g13 version
+
+      - name: every applet parses, and every source it names is one the driver knows
+        run: G13=/tmp/g13pkg/root/usr/bin/g13 ./check.sh
+
+      - name: the applet list in the README matches the folder
+        run: |
+          listed=$(grep -c '^| \[`' README.md)
+          present=$(ls applets/*.json | wc -l)
+          echo "README lists $listed, applets/ holds $present"
+          [ "$listed" = "$present" ] || { echo "the table and the folder disagree" >&2; exit 1; }
